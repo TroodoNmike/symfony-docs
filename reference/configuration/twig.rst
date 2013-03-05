@@ -9,7 +9,6 @@ TwigBundle Configuration Reference
     .. code-block:: yaml
 
         twig:
-            exception_controller:  Symfony\Bundle\TwigBundle\Controller\ExceptionController::showAction
             form:
                 resources:
 
@@ -96,3 +95,44 @@ conditions (see :doc:`/cookbook/controller/error_pages`). Modifying this
 option is advanced. If you need to customize an error page you should use
 the previous link. If you need to perform some behavior on an exception,
 you should add a listener to the ``kernel.exception`` event (see :ref:`dic-tags-kernel-event-listener`).
+
+.. versionadded:: 2.2
+    moved the exception controller to be a service (`twig.controller.exception:showAction` vs `Symfony\\Bundle\\TwigBundle\\Controller\\ExceptionController::showAction`)
+
+
+.. configuration-block::
+
+    .. code-block:: yaml
+
+        # app/config/config.yml
+        parameters:
+            twig.controller.exception.class:      Symfony\Bundle\TwigBundle\Controller\ExceptionController
+
+        services:
+            twig.controller.exception:
+                class:        "%twig.controller.exception.class%"
+                arguments:    [@twig, %kernel.debug%]
+
+    .. code-block:: xml
+
+        <!-- app/config/config.xml -->
+        <parameters>
+            <parameter key="twig.controller.exception.class">Symfony\Bundle\TwigBundle\Controller\ExceptionController</parameter>
+        </parameters>
+
+        <service id="twig.controller.exception" class="%twig.controller.exception.class%">
+            <argument type="service" id="twig" />
+            <argument>%kernel.debug%</argument>
+        </service>
+
+    .. code-block:: php
+
+        // app/config/config.php
+        use Symfony\Component\DependencyInjection\Definition;
+
+        $container->setParameter('twig.controller.exception.class', 'Symfony\Bundle\TwigBundle\Controller\ExceptionController');
+
+        $container->setDefinition('twig.controller.exception', new Definition(
+            '%twig.controller.exception.class%',
+            array('@twig', '%kernel.debug%')
+        ));
